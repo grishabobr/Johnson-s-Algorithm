@@ -1,23 +1,25 @@
 import logo from './logo.svg';
 import './App.css';
+import VisNetwork from './graph.js'
+import { useAtom } from 'jotai';
+import { graphAtom } from './atom';
+
+import {NameForm} from './form.js'
+import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
+
+
+
+
+
 
 function App() {
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className='Layout'>
+        <NameForm/>
+        <div className='aua'><VisNetwork className="vis"></VisNetwork></div>
+      </div>
     </div>
   );
 }
