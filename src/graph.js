@@ -20,7 +20,7 @@ const VisNetwork = () => {
 
   
 
-  const options = {height: "750px"};
+  const options = {height: "754px"};
 
   useEffect(
     () => {
@@ -30,6 +30,8 @@ const VisNetwork = () => {
       const data = {nodes, edges}
 
       network.current = new Network(domNode.current, data, options);
+      
+
     },
     [domNode, network, gr, options]
   );

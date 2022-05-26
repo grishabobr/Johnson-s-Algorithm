@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import { useAtom } from 'jotai';
 import { graphAtom } from './atom';
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 var nodesArr = [];
 var edgesArr = [];
@@ -37,7 +38,20 @@ export function NameForm(props) {
     }
 
     const handleSubmit = (event) => {
-        edgesArr.push({from: value1, to: value2, label: value3, arrows:{to:{enabled:true}}})
+        edgesArr.push({
+            from: value1,
+            to: value2,
+            label: value3,
+            arrows: {
+                to: {
+                    enabled: true
+                }
+            },
+            color: {
+                color: '#4a5061',
+                highlight: '#4a5061',
+            }
+        })
 
         var nodes = new DataSet(nodesArr);
 
@@ -60,8 +74,18 @@ export function NameForm(props) {
                 borderWidth: 1,
                 shape: 'circle',
                 font: {
-                    align: 'center'
+                    align: 'center',
+                    color:'white'
+                },
+                color: {
+                    border: 'white',
+                    background: 'rgb(80, 123, 229)',
+                    highlight: {
+                        border: '#23386b',
+                        background: 'rgb(80, 123, 229)'
+                    }
                 }
+
             });
         }
         var nodes = new DataSet(nodesArr);
@@ -97,7 +121,20 @@ export function NameForm(props) {
             }
             if (i%3==0){
                 p3=curValue;
-                edgesArr.push({from: p1, to: p2, label: p3, arrows:{to:{enabled:true}}});
+                edgesArr.push({
+                    from: p1,
+                    to: p2,
+                    label: p3,
+                    arrows: {
+                        to: {
+                            enabled: true
+                        }
+                    },
+                    color: {
+                        color: '#4a5061',
+                        highlight: '#4a5061',
+                    }
+                });
             }
             if (step>=value5.length) break;
         }
@@ -135,6 +172,8 @@ export function NameForm(props) {
         let oldMatrix = matrixFromEdges(BF.edges, BF.h.length);
         let result = johnsonFinal(BF.h, paths);
         console.log('RESULT:', result);
+
+        setTable(result);
 
     }
 
@@ -277,7 +316,22 @@ export function NameForm(props) {
 
 
 
+   const [tableData, setTableData] = useState('');
+   const [tableHeaderData, setTableHeaderData] = useState('');
 
+   const [showTable, setShowTable] = useState(false);
+
+
+
+    function setTable(result) {
+        
+
+        const listItems = result.map((d, index) => <tr><td className='tableHeader'>{index+1}</td> {d.map((d1) => <td>{d1}</td>)}</tr>);
+        const header = result.map((d, index) => <td className='tableHeader'>{index+1}</td>);
+        setTableData(listItems);
+        setTableHeaderData(header);
+        setShowTable(true);
+    }
 
 
 
@@ -287,41 +341,74 @@ export function NameForm(props) {
   
     return (
         <div className='form'>
-            <form onSubmit={handleSubmit2}>
-                <label>
-                    Number of Nodes:
-                    <input className='inpEdge' type="text" value={value4} onChange={handleChange4} />
-                </label>
-                <input type="submit" value="Create graph" />
-            </form>
-            Add new Edge:
-            <form onSubmit={handleSubmit}>
-                <label>
-                    From:
-                    <input className='inpEdge' type="text" value={value1} onChange={handleChange1} />
-                    To:
-                    <input className='inpEdge' type="text" value={value2} onChange={handleChange2} />
-                    Weight:
-                    <input className='inpEdge' type="text" value={value3} onChange={handleChange3} />
-                </label>
-                <input type="submit" value="Add" />
-            </form>
-            
-            <button onClick={deleteEdges}>Delete all edges</button>
-            <div>
-                List: 
-                <form onSubmit={handleSubmit3}>
-                    <label>
-                        <textarea className='inp' type="text" value={value5} onChange={handleChange5} />
-                    </label>
-                    <input type="submit" value="Submit" />
-                </form>
-            </div>
-            <button onClick = {
-                () => {
-                    Johnson();
-                }
-            } > JohnsonAlg </button>
+
+            {!showTable
+                ?<div className='formShow'>
+                    <div className='head'>Алгоритм Джонсона</div>
+                    <form onSubmit={handleSubmit2} className='form1'>
+                        <label>
+                            Количество вершин:
+                            <input className='inpEdge' type="text" value={value4} onChange={handleChange4} />
+                        </label>
+                        <input type="submit" value="Создать граф" className='btn btn-light'/>
+                    </form>
+                    <div className='form2'>
+                        Добавить ребро:
+                        <form onSubmit={handleSubmit}>
+                            <label>
+                                Из:
+                                <input className='inpEdge' type="text" value={value1} onChange={handleChange1} />
+                                В:
+                                <input className='inpEdge' type="text" value={value2} onChange={handleChange2} />
+                                Вес:
+                                <input className='inpEdge' type="text" value={value3} onChange={handleChange3} />
+                            </label>
+                            <input type="submit" value="Добавить" className='btn btn-light hh'/>
+                        </form>
+                    </div>
+                    
+                    <button onClick={deleteEdges} className='btn btn-light'>Удалить все ребра</button>
+
+                    <div className='form2'>
+                        Ввести ребка списком: 
+                        <form onSubmit={handleSubmit3} className='form1'>
+                            <label>
+                                <textarea className='inp' type="text" value={value5} onChange={handleChange5} />
+                            </label>
+                            <input type="submit" value="Добавить" className='btn btn-light'/>
+                        </form>
+                    </div>
+                    <button onClick = {
+                        () => {
+                            Johnson();
+                        }
+                    } className='john btn btn-light'>Запустить алгоритм Джонсона</button>
+                </div>
+
+                :<div>
+                    <table className='tableJ'>
+                        <thead>
+                            <tr>
+                                <td className='tableHeader'> </td>
+                                {tableHeaderData}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tableData}
+                        </tbody>
+                    
+                    </table>
+                    <button onClick = {
+                        () => {
+                            setShowTable(false);
+                            handleSubmit2();
+                        }
+                    } className='btn btn-light'>Назад</button>
+                </div>
+            }
+
+
+            <div className='widther'></div>
         </div>
     );
 }

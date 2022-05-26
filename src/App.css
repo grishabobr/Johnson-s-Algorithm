@@ -1,32 +1,111 @@
-
-
 .Layout {
   display: flex;
   flex-direction: row;
+  min-height: 100%;
 }
 
-.vis {
-  height:500px;
+.App {
+  height: 100%;
 }
+
+
 
 .aua {
-  height: 500px;
+  height: 100%;
 }
 
 .inp {
-  height:150px;
-  width: 150px;
+  height:210px;
+  width: 100%;
   white-space: pre-line;
-  margin: 5px;
+  border-radius: 5px;
 }
 
 .inpEdge {
-  width: 20px;
-  margin: 5px;
+  width: 35px;
+  margin: 7px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: solid 0px;
 }
 
 .form {
-  background-color: rgb(250, 250, 250);
-  margin: 5px;
-  border: 2px solid rgb(173, 173, 173);
+  background-color: rgb(74, 113, 210);
+  width: auto;
+  height: auto;
+  padding: 10px;
+  color: rgb(229, 229, 229);
+  font-size:18px;
+}
+
+.tableJ {
+  border: 1px solid #eee;
+  tableJ-layout: fixed;
+  margin-bottom: 20px;
+  color:black;
+  width: 100%;
+}
+
+.tableJ th {
+  font-weight: bold;
+  padding: 5px;
+  background: #efefef;
+  border: 1px solid #dddddd;
+}
+
+.tableJ td {
+  padding: 5px 10px;
+  border: 1px solid #eee;
+  text-align: left;
+  
+}
+
+.tableJ tbody tr:nth-child(odd) {
+  background: #fff;
+}
+
+.tableJ tbody tr:nth-child(even) {
+  background: #F7F7F7;
+}
+
+.tableHeader {
+  background-color: rgb(74, 113, 210);
+  color: white;
+}
+
+.head {
+  color: white;
+  font-size: 30px;
+  margin-bottom: 30px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.button {
+  border-radius: 5px;
+}
+
+.form1{
+  display: flex;
+  flex-direction: column;
+}
+
+.form2 {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+}
+
+.john {
+  width: 100%;
+  margin-top: 40px;
+  height: 60px;
+}
+
+.hh {
+  margin-bottom: 3px;
+}
+
+.widther{
+  width: 350px;
 }
