@@ -343,7 +343,7 @@ export function NameForm(props) {
         <div className='form'>
 
             {!showTable
-                ?<div className='formShow'>
+                ?<div className='dd formShow'>
                     <div className='head'>Алгоритм Джонсона</div>
                     <form onSubmit={handleSubmit2} className='form1'>
                         <label>
@@ -369,10 +369,10 @@ export function NameForm(props) {
                     
                     <button onClick={deleteEdges} className='btn btn-light'>Удалить все ребра</button>
 
-                    <div className='form2'>
+                    <div className='form2 fl'>
                         Ввести ребка списком: 
-                        <form onSubmit={handleSubmit3} className='form1'>
-                            <label>
+                        <form onSubmit={handleSubmit3} className='form1 fl'>
+                            <label className='fl'>
                                 <textarea className='inp' type="text" value={value5} onChange={handleChange5} />
                             </label>
                             <input type="submit" value="Добавить" className='btn btn-light'/>
@@ -385,7 +385,7 @@ export function NameForm(props) {
                     } className='john btn btn-light'>Запустить алгоритм Джонсона</button>
                 </div>
 
-                :<div>
+                :<div className='formShow'>
                     <table className='tableJ'>
                         <thead>
                             <tr>

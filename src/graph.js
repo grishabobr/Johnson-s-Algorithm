@@ -20,7 +20,7 @@ const VisNetwork = () => {
 
   
 
-  const options = {height: "754px"};
+  const options = {height: "100%"};
 
   useEffect(
     () => {
@@ -30,6 +30,12 @@ const VisNetwork = () => {
       const data = {nodes, edges}
 
       network.current = new Network(domNode.current, data, options);
+
+      network.current.on("stabilized", function (params) {
+        if (gr[0].length <= 8) network.current.moveTo({scale: 1.4});
+        else if (gr[0].length <= 12) network.current.moveTo({scale: 1.2});
+        else network.current.fit();
+      });
       
 
     },
@@ -37,7 +43,7 @@ const VisNetwork = () => {
   );
 
   return (
-    <div ref = { domNode } />
+    <div  className='aua' ref = { domNode } />
   );
 };
 
