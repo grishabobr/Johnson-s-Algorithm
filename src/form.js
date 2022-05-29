@@ -1,17 +1,13 @@
 import React, {useState, useRef} from 'react';
 import { useAtom } from 'jotai';
 import { graphAtom } from './atom';
-import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { johnsonAlgorithm } from './johnsonAlgrithm';
 
 var nodesArr = [];
 var edgesArr = [];
 
-
-
 export function NameForm(props) {
-
-    
 
     const [value1,setValue1] = useState('');
     const [value2,setValue2] = useState('');
@@ -53,15 +49,14 @@ export function NameForm(props) {
             }
         })
 
-        var nodes = new DataSet(nodesArr);
-
-        var edges = new DataSet(edgesArr);
-
         const newData = [
             nodesArr,
             edgesArr
         ];
         setGr(newData);
+        setValue1('');
+        setValue2('');
+        setValue3('');
         event.preventDefault();
     }
 
@@ -88,9 +83,7 @@ export function NameForm(props) {
 
             });
         }
-        var nodes = new DataSet(nodesArr);
 
-        var edges = new DataSet(edgesArr);
         const newData = [
             nodesArr,
             edgesArr
@@ -138,8 +131,6 @@ export function NameForm(props) {
             }
             if (step>=value5.length) break;
         }
-        var nodes = new DataSet(nodesArr);
-        var edges = new DataSet(edgesArr);
         const newData = [
             nodesArr,
             edgesArr
@@ -150,9 +141,6 @@ export function NameForm(props) {
 
     const deleteEdges = () => {
         edgesArr = [];
-        var nodes = new DataSet(nodesArr);
-
-        var edges = new DataSet(edgesArr);
         const newData = [
             nodesArr,
             edgesArr
@@ -161,171 +149,17 @@ export function NameForm(props) {
     }
 
 
-    
-
-
-
     function Johnson(){
-        let BF = startBF();
-        let johnsonGraph = CalcNewWeights(BF);
-        let paths = dejkstraForEach(johnsonGraph);
-        let oldMatrix = matrixFromEdges(BF.edges, BF.h.length);
-        let result = johnsonFinal(BF.h, paths);
-        console.log('RESULT:', result);
-
-        setTable(result);
-
+        setTable(johnsonAlgorithm(gr));
     }
-
-
-
-    function johnsonFinal(h, newMatrix) {
-        for (let i = 0; i<newMatrix.length; i++){
-            for (let j = 0; j < newMatrix.length; j++) {
-                if (newMatrix[i][j] != 1000000) newMatrix[i][j]+=(-h[i+1]+h[j+1]);
-                else newMatrix[i][j] = 'X';
-            }
-        }
-        return newMatrix;
-    }
-
-
-
-
-    function dejkstraForEach(graph){
-        let n = graph.n;
-        let edges = graph.graph;
-        
-        edges = matrixFromEdges(edges, n);
-
-        let matrix = [];
-        for (let i=0; i<n; i++) matrix.push(dejkstra(edges, i));
-        return matrix;
-    }
-
-    function dejkstra(arr, s) {
-
-        let d = new Array(arr.length).fill(1000000);
-        let used = new Array(arr.length).fill(false);
-
-        d[s]=0;
-
-        for (let i=0; i< arr.length; i++){
-            let v = null;
-            for (let j = 0; j < arr.length; j++) {
-                
-                if (!used[j] && (v === null || d[j] < d[v])) v = j;
-                
-            }
-            if (d[v] == 1000000) break;
-            used[v] = true;
-
-            //console.log('used',!used[j]);
-
-            for (let k = 0; k < arr.length; k++) {
-                if (arr[v][k] >= 0 && d[v] + arr[v][k] < d[k]) d[k] = d[v] + arr[v][k];
-            }
-        }
-        return d;
-    }
-
-
-    function matrixFromEdges(edges, n){
-        let arr = new Array(n).fill(0).map(() => new Array(n).fill(-1))
-        for (let i = 0; i < edges.length; i++) {
-            arr[edges[i][0] - 1][edges[i][1] - 1] = edges[i][2];
-        }
-        return arr;
-    }
-
-
-
-
-    function CalcNewWeights(BF){
-        let newWeights = {
-            n: BF.edges[BF.edges.length - 1][0]-1,
-            graph: []
-        };
-        for (let i = 0; i < BF.edges.length - BF.edges[BF.edges.length - 1][0] + 1; i++) {
-            newWeights.graph.push([BF.edges[i][0], BF.edges[i][1], BF.edges[i][2] + (BF.h[BF.edges[i][0]] - BF.h[BF.edges[i][1]])]);
-            
-        }
-        return newWeights;
-    }
-
-
-    function startBF(){
-        let newGr = [];
-        for (let i=0; i<gr[1].length; i++){
-            newGr.push([gr[1][i].from, gr[1][i].to, gr[1][i].label].map(Number));
-        }
-        for (let i = 0; i < gr[0].length; i++) {
-            newGr.push([gr[0].length+1, i+1, 0]);
-        }
-
-        return {h: BellmanFord(newGr, gr[0].length+1, newGr.length, gr[0].length + 1), edges: newGr};
-    }
-
-    
-
-    function BellmanFord(graph, V, E, src) {
-
-        // Initialize distance of all vertices as infinite.
-        var dis = Array(V).fill(1000000000);
-
-        // initialize distance of source as 0
-        dis[src] = 0;
-
-        // Relax all edges |V| - 1 times. A simple
-        // shortest path from src to any other
-        // vertex can have at-most |V| - 1 edges
-        for (var i = 0; i < V - 1; i++) {
-            for (var j = 0; j < E; j++) {
-                if ((dis[graph[j][0]] + graph[j][2]) < dis[graph[j][1]])
-                    dis[graph[j][1]] = dis[graph[j][0]] + graph[j][2];
-            }
-        }
-
-        // check for negative-weight cycles.
-        // The above step guarantees shortest
-        // distances if graph doesn't contain
-        // negative weight cycle. If we get a
-        // shorter path, then there is a cycle.
-        for (var i = 0; i < E; i++) {
-            var x = graph[i][0];
-            var y = graph[i][1];
-            var weight = graph[i][2];
-            if ((dis[x] != 1000000000) &&
-                (dis[x] + weight < dis[y]))
-                console.log("Graph contains negative" +
-                    " weight cycle");
-        }
-
-        // console.log("Vertex Distance from Source");
-        // for (var i = 0; i < V; i++)
-        //     console.log(i + "   " + dis[i]);
-        return dis;
-    }
-    
-
-
-
-
-
-
-
 
 
    const [tableData, setTableData] = useState('');
    const [tableHeaderData, setTableHeaderData] = useState('');
-
    const [showTable, setShowTable] = useState(false);
 
 
-
     function setTable(result) {
-        
-
         const listItems = result.map((d, index) => <tr><td className='tableHeader'>{index+1}</td> {d.map((d1) => <td>{d1}</td>)}</tr>);
         const header = result.map((d, index) => <td className='tableHeader'>{index+1}</td>);
         setTableData(listItems);
@@ -334,11 +168,6 @@ export function NameForm(props) {
     }
 
 
-
-
-
-
-  
     return (
         <div className='form'>
 
@@ -354,7 +183,7 @@ export function NameForm(props) {
                     </form>
                     <div className='form2'>
                         Добавить ребро:
-                        <form onSubmit={handleSubmit}>
+                        <form className='fl2' onSubmit={handleSubmit}>
                             <label>
                                 Из:
                                 <input className='inpEdge' type="text" value={value1} onChange={handleChange1} />
@@ -370,10 +199,11 @@ export function NameForm(props) {
                     <button onClick={deleteEdges} className='btn btn-light'>Удалить все ребра</button>
 
                     <div className='form2 fl'>
-                        Ввести ребка списком: 
+                        Ввести ребра списком ([из] [в] [вес]):
                         <form onSubmit={handleSubmit3} className='form1 fl'>
                             <label className='fl'>
-                                <textarea className='inp' type="text" value={value5} onChange={handleChange5} />
+                                <textarea className='inp' type="
+                                text " value={value5} onChange={handleChange5} />
                             </label>
                             <input type="submit" value="Добавить" className='btn btn-light'/>
                         </form>
