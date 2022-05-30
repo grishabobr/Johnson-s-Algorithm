@@ -157,84 +157,96 @@ export function NameForm(props) {
    const [tableData, setTableData] = useState('');
    const [tableHeaderData, setTableHeaderData] = useState('');
    const [showTable, setShowTable] = useState(false);
+   const [negativeCycle, setNegativeCycle] = useState(false);
 
 
     function setTable(result) {
-        const listItems = result.map((d, index) => <tr><td className='tableHeader'>{index+1}</td> {d.map((d1) => <td>{d1}</td>)}</tr>);
-        const header = result.map((d, index) => <td className='tableHeader'>{index+1}</td>);
-        setTableData(listItems);
-        setTableHeaderData(header);
-        setShowTable(true);
+        if (result) {
+            const listItems = result.map((d, index) => <tr><td className='tableHeader'>{index+1}</td> {d.map((d1) => <td>{d1}</td>)}</tr>);
+            const header = result.map((d, index) => <td className='tableHeader'>{index+1}</td>);
+            setTableData(listItems);
+            setTableHeaderData(header);
+            setShowTable(true);
+        }
+        else setNegativeCycle(true);
     }
 
 
     return (
         <div className='form'>
-
-            {!showTable
-                ?<div className='dd formShow'>
-                    <div className='head'>Алгоритм Джонсона</div>
-                    <form onSubmit={handleSubmit2} className='form1'>
-                        <label>
-                            Количество вершин:
-                            <input className='inpEdge' type="text" value={value4} onChange={handleChange4} />
-                        </label>
-                        <input type="submit" value="Создать граф" className='btn btn-light'/>
-                    </form>
-                    <div className='form2'>
-                        Добавить ребро:
-                        <form className='fl2' onSubmit={handleSubmit}>
+            {negativeCycle
+                ?<div className='formShow'>
+                    <div className='errorCycle'>Ошибка: В графе присутствует отрицательный цикл.</div>
+                    <button onClick = {
+                            () => {
+                                setNegativeCycle(false);
+                            }
+                        } className='btn btn-light'>Назад</button>
+                </div>
+                :!showTable
+                    ?<div className='dd formShow'>
+                        <div className='head'>Алгоритм Джонсона</div>
+                        <form onSubmit={handleSubmit2} className='form1'>
                             <label>
-                                Из:
-                                <input className='inpEdge' type="text" value={value1} onChange={handleChange1} />
-                                В:
-                                <input className='inpEdge' type="text" value={value2} onChange={handleChange2} />
-                                Вес:
-                                <input className='inpEdge' type="text" value={value3} onChange={handleChange3} />
+                                Количество вершин:
+                                <input className='inpEdge' type="text" value={value4} onChange={handleChange4} />
                             </label>
-                            <input type="submit" value="Добавить" className='btn btn-light hh'/>
+                            <input type="submit" value="Создать граф" className='btn btn-light'/>
                         </form>
-                    </div>
-                    
-                    <button onClick={deleteEdges} className='btn btn-light'>Удалить все ребра</button>
+                        <div className='form2'>
+                            Добавить ребро:
+                            <form className='fl2' onSubmit={handleSubmit}>
+                                <label>
+                                    Из:
+                                    <input className='inpEdge' type="text" value={value1} onChange={handleChange1} />
+                                    В:
+                                    <input className='inpEdge' type="text" value={value2} onChange={handleChange2} />
+                                    Вес:
+                                    <input className='inpEdge' type="text" value={value3} onChange={handleChange3} />
+                                </label>
+                                <input type="submit" value="Добавить" className='btn btn-light hh'/>
+                            </form>
+                        </div>
+                        
+                        <button onClick={deleteEdges} className='btn btn-light'>Удалить все ребра</button>
 
-                    <div className='form2 fl'>
-                        Ввести ребра списком ([из] [в] [вес]):
-                        <form onSubmit={handleSubmit3} className='form1 fl'>
-                            <label className='fl'>
-                                <textarea className='inp' type="
-                                text " value={value5} onChange={handleChange5} />
-                            </label>
-                            <input type="submit" value="Добавить" className='btn btn-light'/>
-                        </form>
+                        <div className='form2 fl'>
+                            Ввести ребра списком ([из] [в] [вес]):
+                            <form onSubmit={handleSubmit3} className='form1 fl'>
+                                <label className='fl'>
+                                    <textarea className='inp' type="
+                                    text " value={value5} onChange={handleChange5} />
+                                </label>
+                                <input type="submit" value="Добавить" className='btn btn-light'/>
+                            </form>
+                        </div>
+                        <button onClick = {
+                            () => {
+                                Johnson();
+                            }
+                        } className='john btn btn-light'>Запустить алгоритм Джонсона</button>
                     </div>
-                    <button onClick = {
-                        () => {
-                            Johnson();
-                        }
-                    } className='john btn btn-light'>Запустить алгоритм Джонсона</button>
-                </div>
 
-                :<div className='formShow'>
-                    <table className='tableJ'>
-                        <thead>
-                            <tr>
-                                <td className='tableHeader'> </td>
-                                {tableHeaderData}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {tableData}
-                        </tbody>
-                    
-                    </table>
-                    <button onClick = {
-                        () => {
-                            setShowTable(false);
-                            handleSubmit2();
-                        }
-                    } className='btn btn-light'>Назад</button>
-                </div>
+                    :<div className='formShow'>
+                        <table className='tableJ'>
+                            <thead>
+                                <tr>
+                                    <td className='tableHeader'> </td>
+                                    {tableHeaderData}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tableData}
+                            </tbody>
+                        
+                        </table>
+                        <button onClick = {
+                            () => {
+                                setShowTable(false);
+                            }
+                        } className='btn btn-light'>Назад</button>
+                    </div>
+                
             }
 
 

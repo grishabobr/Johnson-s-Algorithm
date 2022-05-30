@@ -1,8 +1,9 @@
 function johnsonAlgorithm(graph) {
     console.log(graph)
     let BF = startBF(graph);
+    if (!BF) return false;
     let johnsonGraph = CalcNewWeights(BF);
-    let paths = dejkstraForEach(johnsonGraph);
+    let paths = dijkstraForEach(johnsonGraph);
     let result = johnsonFinal(BF.h, paths);
     return result;
 }
@@ -16,11 +17,14 @@ function startBF(graph) {
     for (let i = 0; i < graph[0].length; i++) {
         newGr.push([graph[0].length + 1, i + 1, 0]);
     }
-
-    return {
-        h: BellmanFord(newGr, graph[0].length + 1, newGr.length, graph[0].length + 1),
-        edges: newGr
-    };
+    let BFres = BellmanFord(newGr, graph[0].length + 1, newGr.length, graph[0].length + 1);
+    if (BFres){
+        return {
+            h: BFres,
+            edges: newGr
+        };
+    }
+    else return false;
 }
 
 
@@ -37,7 +41,7 @@ function BellmanFord(graph, V, E, src) {
         var x = graph[i][0];
         var y = graph[i][1];
         var weight = graph[i][2];
-        if ((dis[x] != 1000000000) && (dis[x] + weight < dis[y])) console.log("Graph contains negative weight cycle");
+        if ((dis[x] != 1000000000) && (dis[x] + weight < dis[y])) dis=false;
     }
     return dis;
 }
@@ -55,14 +59,14 @@ function CalcNewWeights(BF) {
 }
 
 
-function dejkstraForEach(graph) {
+function dijkstraForEach(graph) {
     let n = graph.n;
     let edges = graph.graph;
 
     edges = matrixFromEdges(edges, n);
 
     let matrix = [];
-    for (let i = 0; i < n; i++) matrix.push(dejkstra(edges, i));
+    for (let i = 0; i < n; i++) matrix.push(dijkstra(edges, i));
     return matrix;
 }
 
@@ -74,7 +78,7 @@ function matrixFromEdges(edges, n) {
     return arr;
 }
 
-function dejkstra(arr, s) {
+function dijkstra(arr, s) {
 
     let d = new Array(arr.length).fill(1000000);
     let used = new Array(arr.length).fill(false);
@@ -84,9 +88,7 @@ function dejkstra(arr, s) {
     for (let i = 0; i < arr.length; i++) {
         let v = null;
         for (let j = 0; j < arr.length; j++) {
-
             if (!used[j] && (v === null || d[j] < d[v])) v = j;
-
         }
         if (d[v] == 1000000) break;
         used[v] = true;
