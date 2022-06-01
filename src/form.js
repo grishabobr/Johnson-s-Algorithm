@@ -2,7 +2,7 @@ import React, {useState, useRef} from 'react';
 import { useAtom } from 'jotai';
 import { graphAtom } from './atom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { johnsonAlgorithm } from './johnsonAlgrithm';
+import johnsonAlgorithm from './johnsonAlgrithm';
 
 var nodesArr = [];
 var edgesArr = [];

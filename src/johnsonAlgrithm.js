@@ -1,5 +1,6 @@
-function johnsonAlgorithm(graph) {
-    console.log(graph)
+import PriorityQueue from "js-priority-queue";
+
+export default function johnsonAlgorithm(graph) {
     let BF = startBF(graph);
     if (!BF) return false;
     let johnsonGraph = CalcNewWeights(BF);
@@ -62,39 +63,43 @@ function CalcNewWeights(BF) {
 function dijkstraForEach(graph) {
     let n = graph.n;
     let edges = graph.graph;
-
-    edges = matrixFromEdges(edges, n);
-
     let matrix = [];
-    for (let i = 0; i < n; i++) matrix.push(dijkstra(edges, i));
+    for (let i = 0; i < n; i++) matrix.push(dijkstra(pairsFromEdges(edges, n), i, n));
     return matrix;
 }
 
-function matrixFromEdges(edges, n) {
-    let arr = new Array(n).fill(0).map(() => new Array(n).fill(-1))
-    for (let i = 0; i < edges.length; i++) {
-        arr[edges[i][0] - 1][edges[i][1] - 1] = edges[i][2];
+function pairsFromEdges(edges, n) {
+    let arr = new Array(n).fill(0).map(() => new Array())
+    for (let i=0;i<edges.length;i++){
+        arr[edges[i][0]-1].push([edges[i][1]-1, edges[i][2]]);
     }
     return arr;
 }
 
-function dijkstra(arr, s) {
-
-    let d = new Array(arr.length).fill(1000000);
-    let used = new Array(arr.length).fill(false);
-
-    d[s] = 0;
-
-    for (let i = 0; i < arr.length; i++) {
-        let v = null;
-        for (let j = 0; j < arr.length; j++) {
-            if (!used[j] && (v === null || d[j] < d[v])) v = j;
+function dijkstra(arr, s, n) {
+    let d = new Array(n).fill(1000000);
+    d[s]=0;
+    
+    var q = new PriorityQueue({
+        comparator: function (a, b) {
+            return b[0] - a[0];
         }
-        if (d[v] == 1000000) break;
-        used[v] = true;
+    });
+    q.queue([0, s]);
+    while (q.length!=0) {
+        let v = q.peek()[1];
+        let cur_d = -q.peek()[0];
+        q.dequeue();
+        if (cur_d > d[v]) continue;
 
-        for (let k = 0; k < arr.length; k++) {
-            if (arr[v][k] >= 0 && d[v] + arr[v][k] < d[k]) d[k] = d[v] + arr[v][k];
+        for (let j=0; j<arr[v].length; j++){
+            let to = arr[v][j][0];
+            let len = arr[v][j][1];
+            if (d[v] + len < d[to]) {
+                d[to] = d[v] + len;
+                //p[to] = v;
+                q.queue([-d[to], to]);
+            }
         }
     }
     return d;
@@ -109,6 +114,3 @@ function johnsonFinal(h, newMatrix) {
     }
     return newMatrix;
 }
-
-
-module.exports = { johnsonAlgorithm };
